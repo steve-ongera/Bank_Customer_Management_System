@@ -1,3 +1,5 @@
+// Dashboard.jsx
+
 import React, { useState, useEffect } from 'react'
 import { customerAPI, transactionAPI } from '../utils/api'
 import { useAuth } from '../utils/auth'

@@ -112,7 +112,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
             customer.balance += float(amount)
             customer.save()
             
-            transaction_id = f"TXN{deposit}{timezone.now().strftime('%Y%m%d%H%M%S')}{uuid.uuid4().hex[:4]}"
+            # FIX: was f"TXN{deposit}..." — `deposit` was an undefined variable
+            transaction_id = f"TXNDEP{timezone.now().strftime('%Y%m%d%H%M%S')}{uuid.uuid4().hex[:4]}"
             transaction = Transaction.objects.create(
                 transaction_id=transaction_id,
                 customer=customer,
@@ -144,7 +145,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
             customer.balance -= float(amount)
             customer.save()
             
-            transaction_id = f"TXN{withdrawal}{timezone.now().strftime('%Y%m%d%H%M%S')}{uuid.uuid4().hex[:4]}"
+            # FIX: was f"TXN{withdrawal}..." — `withdrawal` was an undefined variable
+            transaction_id = f"TXNWDR{timezone.now().strftime('%Y%m%d%H%M%S')}{uuid.uuid4().hex[:4]}"
             transaction = Transaction.objects.create(
                 transaction_id=transaction_id,
                 customer=customer,
