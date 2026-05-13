@@ -1,5 +1,3 @@
-// Dashboard.jsx
-
 import React, { useState, useEffect } from 'react'
 import { customerAPI, transactionAPI } from '../utils/api'
 import { useAuth } from '../utils/auth'
@@ -25,13 +23,18 @@ function Dashboard() {
         transactionAPI.getAll(),
       ])
 
-      const totalBalance = customersRes.data.reduce((sum, c) => sum + parseFloat(c.balance), 0)
+      // FIX: DRF returns paginated responses as { count, next, previous, results: [...] }
+      // Use .results if paginated, fall back to .data directly if pagination is disabled
+      const customers = customersRes.data.results ?? customersRes.data
+      const transactions = transactionsRes.data.results ?? transactionsRes.data
+
+      const totalBalance = customers.reduce((sum, c) => sum + parseFloat(c.balance || 0), 0)
 
       setStats({
-        totalCustomers: customersRes.data.length,
+        totalCustomers: customers.length,
         totalBalance: totalBalance,
-        totalTransactions: transactionsRes.data.length,
-        recentTransactions: transactionsRes.data.slice(0, 5),
+        totalTransactions: transactions.length,
+        recentTransactions: transactions.slice(0, 5),
       })
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
