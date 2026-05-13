@@ -1,3 +1,5 @@
+// Customers.jsx
+
 import React, { useState, useEffect } from 'react'
 import { customerAPI } from '../utils/api'
 import CustomerModal from '../components/CustomerModal'
@@ -17,7 +19,9 @@ function Customers() {
   const fetchCustomers = async () => {
     try {
       const response = await customerAPI.getAll()
-      setCustomers(response.data)
+      // FIX: DRF returns paginated { count, next, previous, results: [...] }
+      // Use .results if paginated, fall back to .data directly if pagination is disabled
+      setCustomers(response.data.results ?? response.data)
     } catch (error) {
       console.error('Error fetching customers:', error)
     } finally {
@@ -39,7 +43,8 @@ function Customers() {
   const handleViewTransactions = async (customer) => {
     try {
       const response = await customerAPI.getTransactions(customer.id)
-      setTransactions(response.data)
+      // FIX: same pagination handling for transactions list
+      setTransactions(response.data.results ?? response.data)
       setSelectedCustomer(customer)
       setShowTransactions(true)
     } catch (error) {
@@ -184,7 +189,7 @@ function Customers() {
                           <td>{transaction.description || '-'}</td>
                           <td>${parseFloat(transaction.balance_after).toLocaleString()}</td>
                           <td>{new Date(transaction.created_at).toLocaleString()}</td>
-                         </tr>
+                        </tr>
                       ))}
                     </tbody>
                   </table>
