@@ -1,58 +1,39 @@
-// Navbar.jsx
+// Sidebar.jsx
 import React from 'react'
-import { useAuth } from '../utils/auth'
-import { useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
-function Navbar({ sidebarOpen, setSidebarOpen }) {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+function Sidebar({ sidebarOpen }) {
+  const menuItems = [
+    { path: '/dashboard', icon: 'bi-speedometer2', label: 'Dashboard' },
+    { path: '/customers', icon: 'bi-people',        label: 'Customers' },
+    { path: '/reports',   icon: 'bi-file-earmark-bar-graph', label: 'Reports'   },
+    { path: '/analysis',  icon: 'bi-graph-up',      label: 'Analysis'  },
+    { path: '/profile',   icon: 'bi-person',         label: 'Profile'   },
+    { path: '/settings',  icon: 'bi-gear',            label: 'Settings'  },
+  ]
 
   return (
-    <nav className={`navbar ${sidebarOpen ? '' : 'sidebar-closed'}`}>
-      <div className="navbar-left">
-        <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <i className="bi bi-list"></i>
-        </button>
-        <h4 className="mb-0">Bank Management System</h4>
+    <aside className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+      <div className="sidebar-header">
+        <i className="bi bi-bank"></i>
+        {sidebarOpen && <span>Bank System</span>}
       </div>
 
-      <div className="navbar-right">
-        <div className="dropdown">
-          <button className="dropdown-toggle-btn">
-            <i className="bi bi-person-circle"></i>
-            <span>{user?.first_name || user?.username}</span>
-          </button>
-          <div className="dropdown-menu-custom">
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/dashboard') }}>
-              <i className="bi bi-speedometer2"></i> Dashboard
-            </a>
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/reports') }}>
-              <i className="bi bi-file-earmark-bar-graph"></i> Reports
-            </a>
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/analysis') }}>
-              <i className="bi bi-graph-up"></i> Analysis
-            </a>
-            <hr />
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/profile') }}>
-              <i className="bi bi-person"></i> Profile
-            </a>
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate('/settings') }}>
-              <i className="bi bi-gear"></i> Settings
-            </a>
-            <hr />
-            <a href="#" onClick={(e) => { e.preventDefault(); handleLogout() }}>
-              <i className="bi bi-box-arrow-right"></i> Logout
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
+      <nav className="sidebar-nav">
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            data-label={item.label}
+            className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+          >
+            <i className={`bi ${item.icon}`}></i>
+            {sidebarOpen && <span>{item.label}</span>}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
   )
 }
 
-export default Navbar
+export default Sidebar
